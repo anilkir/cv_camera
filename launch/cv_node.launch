@@ -3,7 +3,7 @@
 
     <param name="frame_id" value="ir_0" />
     <!-- <param name="~device_id" value="0" /> -->
-    <param name="~device_sn" value="801c0030-5112-3039-3433-373300000000" />
+    <param name="~device_sn" value="000d0036-5110-3039-3433-373300000000" />
     <param name="~cv_cap_prop_format" value="-1"/>
     <param name="~cv_cap_prop_convert_rgb" value="0"/>
     <param name="~mirror_horizontal" value="false"/>

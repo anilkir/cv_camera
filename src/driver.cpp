@@ -80,7 +80,7 @@ void Driver::setup()
   camera_->setPropertyFromParam(cv::CAP_PROP_FPS, "cv_cap_prop_fps");
   // camera_->setPropertyFromParam(cv::CAP_PROP_FOURCC, "cv_cap_prop_fourcc");
   camera_->setPropertyFromParam(cv::CAP_PROP_FRAME_COUNT, "cv_cap_prop_frame_count");
-  camera_->setPropertyFromParam(cv::CAP_PROP_FORMAT, "cv_cap_prop_format");
+  // camera_->setPropertyFromParam(cv::CAP_PROP_FORMAT, "cv_cap_prop_format");
   camera_->setPropertyFromParam(cv::CAP_PROP_MODE, "cv_cap_prop_mode");
   camera_->setPropertyFromParam(cv::CAP_PROP_BRIGHTNESS, "cv_cap_prop_brightness");
   camera_->setPropertyFromParam(cv::CAP_PROP_CONTRAST, "cv_cap_prop_contrast");

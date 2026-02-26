@@ -178,9 +178,9 @@ bool Capture::capture()
   if (cap_.read(bridge_.image))
   {
     // Trim off lepton metadata
-    // int cropheight = bridge_.image.size().height - 2;
-    // int cropwidth = bridge_.image.size().width;
-    // bridge_.image = bridge_.image(cv::Range(0,cropheight),cv::Range(0,cropwidth));
+    int cropheight = bridge_.image.size().height - 2;
+    int cropwidth = bridge_.image.size().width;
+    bridge_.image = bridge_.image(cv::Range(0,cropheight),cv::Range(0,cropwidth));
 
     // Mirror
     if (mirror_horizontal_)
@@ -263,7 +263,7 @@ bool Capture::capture()
       // Assumes raw values are centi-Kelvin (K * 100).
       {
         const int bar_width = 5;
-        const int bar_height = 80;
+        const int bar_height = 60;
         const int margin = 6;
         const int text_pad = 3;
 

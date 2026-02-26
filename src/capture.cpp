@@ -314,7 +314,7 @@ bool Capture::capture()
           cv::rectangle(bridge_viz_.image,
                         cv::Point(plate_left, plate_top),
                         cv::Point(plate_right, plate_bottom),
-                        cv::Scalar(0, 0, 0), cv::FILLED);
+                        cv::Scalar(128, 0, 0), cv::FILLED);
 
           const cv::Rect roi(bar_x, bar_y, bar_width, bar_h);
           grad_color.copyTo(bridge_viz_.image(roi));

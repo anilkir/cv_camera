@@ -294,7 +294,7 @@ bool Capture::capture()
           const float min_c = raw_to_c(minVal);
           const float mid_c = (max_c + min_c) * 0.5f;
 
-          const double font_scale = 0.25;
+          const double font_scale = 0.15;
           const int thickness = 1;
           const std::string label_max = cv::format("%.1fC", max_c);
           const std::string label_mid = cv::format("%.1fC", mid_c);

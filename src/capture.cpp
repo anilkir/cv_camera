@@ -259,13 +259,74 @@ bool Capture::capture()
       
       info_viz_ = info_;
 
+      // Draw a temperature scale bar (Celsius) onto the visualization image.
+      // Assumes raw values are centi-Kelvin (K * 100).
+      {
+        const int bar_width = 14;
+        const int bar_height = 160;
+        const int margin = 6;
+        const int text_pad = 3;
+
+        const int img_w = bridge_viz_.image.cols;
+        const int img_h = bridge_viz_.image.rows;
+        const int bar_x = std::max(0, img_w - bar_width - margin);
+        const int bar_y = std::max(0, margin);
+        const int bar_h = std::min(bar_height, img_h - 2 * margin);
+
+        if (bar_h > 10 && img_w > bar_width + 2 * margin)
+        {
+          cv::Mat grad(bar_h, 1, CV_8UC1);
+          for (int r = 0; r < bar_h; ++r)
+          {
+            const float t = 1.0f - static_cast<float>(r) / static_cast<float>(bar_h - 1);
+            grad.at<uint8_t>(r, 0) = static_cast<uint8_t>(t * 255.0f);
+          }
+
+          cv::Mat grad_color;
+          cv::applyColorMap(grad, grad_color, cv::COLORMAP_HOT);
+          cv::resize(grad_color, grad_color, cv::Size(bar_width, bar_h), 0, 0, cv::INTER_NEAREST);
+
+          // Dark background plate so the bar and text stay readable.
+          const int plate_left = std::max(0, bar_x - 52);
+          const int plate_top = std::max(0, bar_y - 2);
+          const int plate_right = std::min(img_w - 1, bar_x + bar_width + 2);
+          const int plate_bottom = std::min(img_h - 1, bar_y + bar_h + 2);
+          cv::rectangle(bridge_viz_.image,
+                        cv::Point(plate_left, plate_top),
+                        cv::Point(plate_right, plate_bottom),
+                        cv::Scalar(0, 0, 0), cv::FILLED);
+
+          const cv::Rect roi(bar_x, bar_y, bar_width, bar_h);
+          grad_color.copyTo(bridge_viz_.image(roi));
+
+          auto raw_to_c = [](double raw_mk) {
+            return static_cast<float>(raw_mk / 100.0 - 273.15);
+          };
+
+          const float max_c = raw_to_c(maxVal);
+          const float min_c = raw_to_c(minVal);
+          const float mid_c = (max_c + min_c) * 0.5f;
+
+          const int text_x = std::max(0, bar_x - 48);
+          cv::putText(bridge_viz_.image, cv::format("%.1fC", max_c),
+                      cv::Point(text_x, bar_y + text_pad + 10),
+                      cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255), 1, cv::LINE_AA);
+          cv::putText(bridge_viz_.image, cv::format("%.1fC", mid_c),
+                      cv::Point(text_x, bar_y + bar_h / 2 + 5),
+                      cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255), 1, cv::LINE_AA);
+          cv::putText(bridge_viz_.image, cv::format("%.1fC", min_c),
+                      cv::Point(text_x, bar_y + bar_h - text_pad),
+                      cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255), 1, cv::LINE_AA);
+        }
+      }
+
       // Publish temperature at picked point
       uint16_t temp_mk = bridge_.image.at<uint16_t>(pty,ptx);
       std_msgs::Float64 intensitymsg;
       intensitymsg.data = static_cast< float >( temp_mk );
       pickedpoint.publish(intensitymsg);
       // sensor_msgs::Temperature tempmsg;
-      // tempmsg.temperature = static_cast< float >( temp_mk ) / 100 - 271.15;
+      // tempmsg.temperature = static_cast< float >( temp_mk ) / 100 - 273.15;
       // tempmsg.header.stamp = stamp;
       // pointtemp.publish(tempmsg);
 

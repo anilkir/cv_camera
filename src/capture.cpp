@@ -270,8 +270,8 @@ bool Capture::capture()
         const int img_w = bridge_viz_.image.cols;
         const int img_h = bridge_viz_.image.rows;
         const int bar_x = std::max(0, img_w - bar_width - margin);
-        const int bar_y = std::max(0, img_h - bar_h - margin);
         const int bar_h = std::min(bar_height, img_h - 2 * margin);
+        const int bar_y = std::max(0, img_h - bar_h - margin);
 
         if (bar_h > 10 && img_w > bar_width + 2 * margin)
         {

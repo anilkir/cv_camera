@@ -286,8 +286,28 @@ bool Capture::capture()
           cv::applyColorMap(grad, grad_color, cv::COLORMAP_HOT);
           cv::resize(grad_color, grad_color, cv::Size(bar_width, bar_h), 0, 0, cv::INTER_NEAREST);
 
+          auto raw_to_c = [](double raw_mk) {
+            return static_cast<float>(raw_mk / 100.0 - 273.15);
+          };
+
+          const float max_c = raw_to_c(maxVal);
+          const float min_c = raw_to_c(minVal);
+          const float mid_c = (max_c + min_c) * 0.5f;
+
+          const double font_scale = 0.25;
+          const int thickness = 1;
+          const std::string label_max = cv::format("%.1fC", max_c);
+          const std::string label_mid = cv::format("%.1fC", mid_c);
+          const std::string label_min = cv::format("%.1fC", min_c);
+
+          int baseline = 0;
+          const cv::Size size_max = cv::getTextSize(label_max, cv::FONT_HERSHEY_SIMPLEX, font_scale, thickness, &baseline);
+          const cv::Size size_mid = cv::getTextSize(label_mid, cv::FONT_HERSHEY_SIMPLEX, font_scale, thickness, &baseline);
+          const cv::Size size_min = cv::getTextSize(label_min, cv::FONT_HERSHEY_SIMPLEX, font_scale, thickness, &baseline);
+          const int max_label_w = std::max(size_max.width, std::max(size_mid.width, size_min.width));
+
           // Dark background plate so the bar and text stay readable.
-          const int plate_left = std::max(0, bar_x - 24);
+          const int plate_left = std::max(0, bar_x - max_label_w - 8);
           const int plate_top = std::max(0, bar_y - 2);
           const int plate_right = std::min(img_w - 1, bar_x + bar_width + 2);
           const int plate_bottom = std::min(img_h - 1, bar_y + bar_h + 2);
@@ -299,24 +319,14 @@ bool Capture::capture()
           const cv::Rect roi(bar_x, bar_y, bar_width, bar_h);
           grad_color.copyTo(bridge_viz_.image(roi));
 
-          auto raw_to_c = [](double raw_mk) {
-            return static_cast<float>(raw_mk / 100.0 - 273.15);
-          };
-
-          const float max_c = raw_to_c(maxVal);
-          const float min_c = raw_to_c(minVal);
-          const float mid_c = (max_c + min_c) * 0.5f;
-
-          const int text_x = std::max(0, bar_x - 18);
-          const double font_scale = 0.3;
-          const int thickness = 1;
-          cv::putText(bridge_viz_.image, cv::format("%.1fC", max_c),
-                      cv::Point(text_x, bar_y + text_pad + 9),
+          const int text_x = std::max(0, bar_x - 4 - max_label_w);
+          cv::putText(bridge_viz_.image, label_max,
+                      cv::Point(text_x, bar_y + text_pad + 8),
                       cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255), thickness, cv::LINE_AA);
-          cv::putText(bridge_viz_.image, cv::format("%.1fC", mid_c),
+          cv::putText(bridge_viz_.image, label_mid,
                       cv::Point(text_x, bar_y + bar_h / 2 + 4),
                       cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255), thickness, cv::LINE_AA);
-          cv::putText(bridge_viz_.image, cv::format("%.1fC", min_c),
+          cv::putText(bridge_viz_.image, label_min,
                       cv::Point(text_x, bar_y + bar_h - text_pad),
                       cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255), thickness, cv::LINE_AA);
         }

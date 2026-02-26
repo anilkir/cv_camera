@@ -262,7 +262,7 @@ bool Capture::capture()
       // Draw a temperature scale bar (Celsius) onto the visualization image.
       // Assumes raw values are centi-Kelvin (K * 100).
       {
-        const int bar_width = 14;
+        const int bar_width = 5;
         const int bar_height = 160;
         const int margin = 6;
         const int text_pad = 3;
@@ -287,7 +287,7 @@ bool Capture::capture()
           cv::resize(grad_color, grad_color, cv::Size(bar_width, bar_h), 0, 0, cv::INTER_NEAREST);
 
           // Dark background plate so the bar and text stay readable.
-          const int plate_left = std::max(0, bar_x - 52);
+          const int plate_left = std::max(0, bar_x - 24);
           const int plate_top = std::max(0, bar_y - 2);
           const int plate_right = std::min(img_w - 1, bar_x + bar_width + 2);
           const int plate_bottom = std::min(img_h - 1, bar_y + bar_h + 2);
@@ -307,7 +307,7 @@ bool Capture::capture()
           const float min_c = raw_to_c(minVal);
           const float mid_c = (max_c + min_c) * 0.5f;
 
-          const int text_x = std::max(0, bar_x - 48);
+          const int text_x = std::max(0, bar_x - 22);
           cv::putText(bridge_viz_.image, cv::format("%.1fC", max_c),
                       cv::Point(text_x, bar_y + text_pad + 10),
                       cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255), 1, cv::LINE_AA);

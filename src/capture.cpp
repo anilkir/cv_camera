@@ -263,14 +263,14 @@ bool Capture::capture()
       // Assumes raw values are centi-Kelvin (K * 100).
       {
         const int bar_width = 5;
-        const int bar_height = 160;
+        const int bar_height = 80;
         const int margin = 6;
         const int text_pad = 3;
 
         const int img_w = bridge_viz_.image.cols;
         const int img_h = bridge_viz_.image.rows;
         const int bar_x = std::max(0, img_w - bar_width - margin);
-        const int bar_y = std::max(0, margin);
+        const int bar_y = std::max(0, img_h - bar_h - margin);
         const int bar_h = std::min(bar_height, img_h - 2 * margin);
 
         if (bar_h > 10 && img_w > bar_width + 2 * margin)
@@ -294,7 +294,7 @@ bool Capture::capture()
           const float min_c = raw_to_c(minVal);
           const float mid_c = (max_c + min_c) * 0.5f;
 
-          const double font_scale = 0.15;
+          const double font_scale = 0.20;
           const int thickness = 1;
           const std::string label_max = cv::format("%.1fC", max_c);
           const std::string label_mid = cv::format("%.1fC", mid_c);

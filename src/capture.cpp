@@ -307,16 +307,18 @@ bool Capture::capture()
           const float min_c = raw_to_c(minVal);
           const float mid_c = (max_c + min_c) * 0.5f;
 
-          const int text_x = std::max(0, bar_x - 22);
+          const int text_x = std::max(0, bar_x - 18);
+          const double font_scale = 0.3;
+          const int thickness = 1;
           cv::putText(bridge_viz_.image, cv::format("%.1fC", max_c),
-                      cv::Point(text_x, bar_y + text_pad + 10),
-                      cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255), 1, cv::LINE_AA);
+                      cv::Point(text_x, bar_y + text_pad + 9),
+                      cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255), thickness, cv::LINE_AA);
           cv::putText(bridge_viz_.image, cv::format("%.1fC", mid_c),
-                      cv::Point(text_x, bar_y + bar_h / 2 + 5),
-                      cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255), 1, cv::LINE_AA);
+                      cv::Point(text_x, bar_y + bar_h / 2 + 4),
+                      cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255), thickness, cv::LINE_AA);
           cv::putText(bridge_viz_.image, cv::format("%.1fC", min_c),
                       cv::Point(text_x, bar_y + bar_h - text_pad),
-                      cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255), 1, cv::LINE_AA);
+                      cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255), thickness, cv::LINE_AA);
         }
       }
 
